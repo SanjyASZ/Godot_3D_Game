@@ -8,9 +8,9 @@ var SPEED = 3.0
 const JUMP_VELOCITY = 4.5
 
 var running = false
-
-var walking_speed = 3.0
-var running_speed = 6.0
+var walking_speed :float = 3.0
+var running_speed : float = 6.0
+var rotation_speed :float = 8.0
 
 @export var sensitivity_h = 0.5
 @export var inverse_h = 1
@@ -24,7 +24,7 @@ func _ready():
 func _input(event):
 	if event is InputEventMouseMotion:
 		rotate_y(deg_to_rad(inverse_h*event.relative.x*sensitivity_h))
-		visuals.rotate_y(deg_to_rad(-inverse_h*event.relative.x*sensitivity_h))
+		visuals.rotate_y(deg_to_rad(event.relative.x*sensitivity_h))
 		# ZOOM HERE 
 
 func _physics_process(delta):
@@ -55,8 +55,8 @@ func _physics_process(delta):
 		else:
 			if animation_player.current_animation != "running":
 				animation_player.play("running")
-			
-		visuals.look_at(position + direction)
+				
+		visuals.rotation.y = lerp_angle(visuals.rotation.y, atan2(-input_dir.x, -input_dir.y),rotation_speed * delta)
 		velocity.x = direction.x * SPEED
 		velocity.z = direction.z * SPEED
 	else:
